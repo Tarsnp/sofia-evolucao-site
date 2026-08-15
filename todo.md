@@ -75,6 +75,15 @@ A página comercial será criada como rota separada, sem substituir a página of
 - [ ] Versionar SQL e export do workflow na branch de segurança.
 - [ ] Atualizar Notion com o modelo relacional detalhado.
 - [ ] Validar os três artefactos e os critérios de rollback.
+- [ ] Rever os manuais oficiais sobre Hetzner, servidor e PostgreSQL da Sofia.
+- [ ] Confirmar no changelog que a base existente permanece na Hetzner.
+- [ ] Remover a recomendação de migração ou duplicação para Supabase.
+- [x] Decisão: não criar staging nesta fase; executar migration aditiva diretamente em produção via nó n8n dedicado.
+- [ ] Criar workflow n8n de migration com a credencial `Postgres - Sofia`.
+- [ ] Executar migration uma única vez no schema `sofia`.
+- [ ] Validar tabelas, índices, constraints, trigger e função.
+- [ ] Desativar workflow de migration após execução.
+- [ ] Documentar execução e resultado no Notion.
 - [ ] Atualizar o changelog com o commit `dee72b6` e o workflow `gVIIbD26KiscNVx3`.
 - [ ] Documentar nós, contratos, estados, checks e ponto de integração.
 - [ ] Relacionar o primeiro módulo com isolamento multi-tenant.
