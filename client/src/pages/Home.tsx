@@ -130,7 +130,7 @@ export default function Home() {
 
       <section className="closing-section"><div className="closing-inner"><img src={brandMark} alt="" /><div className="section-marker">LABORYA · AUTONOMOUS DIGITAL WORKERS FOR SMBs</div><h2>A Sofia já é o motor.<br /><span>Agora damos-lhe controlo.</span></h2><a className="button button-primary" href="#visao">Voltar ao início <ArrowUpRight size={17} /></a></div></section>
 
-      <footer className="site-footer"><span>© 2026 LABORYA</span><span>SOFIA / EVOLUÇÃO INCREMENTAL</span><a href="https://www.uselaborya.com/" target="_blank" rel="noreferrer">uselaborya.com <ArrowUpRight size={13} /></a></footer>
+      <footer className="site-footer"><span>© 2026 LABORYA</span><span>SOFIA / EVOLUÇÃO INCREMENTAL</span><a href="/sofia-para-negocios">Sofia para negócios <ArrowUpRight size={13} /></a><a href="https://www.uselaborya.com/" target="_blank" rel="noreferrer">uselaborya.com <ArrowUpRight size={13} /></a></footer>
     </main>
   );
 }

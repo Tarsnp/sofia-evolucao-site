@@ -23,3 +23,23 @@ O ícone/logo atual da Sofia permanece como referência oficial e não será sub
 - [ ] Implementar revisão LABORYA em alteração isolada.
 - [ ] Verificar desktop e mobile.
 - [ ] Guardar novo checkpoint apenas após validação.
+
+## Futura página comercial Sofia para negócios
+
+## Execução aprovada
+
+A página comercial será criada como rota separada, sem substituir a página oficial “Sofia — Evolução Incremental”. Toda alteração será validada nas duas rotas e guardada num checkpoint reversível.
+
+
+- [ ] Definir ICP inicial entre negócios locais de serviços.
+- [ ] Estruturar narrativa comercial separada da página técnica oficial.
+- [ ] Definir casos de uso concretos sem inventar resultados ou testemunhos.
+- [ ] Criar CTA de piloto e formulário de qualificação.
+- [ ] Definir prova operacional, segurança e supervisão humana.
+- [ ] Preservar a página atual como referência oficial da equipa.
+- [ ] Criar wireframe e rota `/sofia-para-negocios`.
+- [ ] Implementar hero comercial e proposta de valor.
+- [ ] Adicionar casos de uso SMB e demonstração operacional.
+- [ ] Adicionar secção de confiança, piloto e CTA de qualificação.
+- [ ] Validar rota técnica e rota comercial em desktop e mobile.
+- [ ] Guardar checkpoint da nova versão.
