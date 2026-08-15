@@ -54,6 +54,16 @@ A página comercial será criada como rota separada, sem substituir a página of
 - [ ] Criar checkpoint WebDev antes das alterações.
 - [ ] Criar branch Git de segurança para o upgrade.
 - [ ] Confirmar critérios de aceitação e plano de rollback.
+- [ ] Adicionar requisito multi-tenant/SaaS ao changelog.
+- [ ] Tornar `tenant_id` obrigatório no Work Item e nas tools do piloto.
+- [ ] Definir isolamento de memória, credenciais, canais, políticas, logs e retries.
+- [ ] Separar tenant, unidade, conta de canal, utilizador final e instância da Sofia.
+- [ ] Adicionar testes de não-vazamento entre tenants aos critérios de aceitação.
+- [ ] Confirmar branch `feature/sofia-upgrade-core` como base de trabalho.
+- [ ] Localizar no n8n o workflow operacional de marcação.
+- [ ] Mapear pontos de confirmação, criação de evento e resposta final.
+- [ ] Preparar módulo de verificação sem alterar produção.
+- [ ] Documentar no Notion cada alteração do fluxo.
 
 ## GitHub
 
