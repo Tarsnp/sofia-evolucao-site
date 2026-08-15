@@ -1,88 +1,52 @@
-# Auditoria de marca LABORYA
+# Estado consolidado — Evolução da Sofia
 
-## Nova decisão de identidade
+## Regra temporária
 
-## Regra de execução
+Não executar novos comandos, migrations, ativações n8n, alterações de produção ou mudanças de arquitetura até o mapa único da evolução estar documentado no Notion e aprovado pela equipa.
 
-Toda alteração no site deve ser feita sobre uma versão guardada, com checkpoint antes da edição, verificação visual depois da edição e novo checkpoint somente após validação. Não usar alterações destrutivas nem substituir a versão estável sem possibilidade de rollback.
+## Concluído
 
+- [x] Sofia existente preservada como baseline.
+- [x] Página técnica e página comercial do site versionadas.
+- [x] Repositório privado GitHub sincronizado.
+- [x] Branch `feature/sofia-upgrade-core` criada.
+- [x] SQL versionado para `sofia.work_items` e `sofia.work_item_events`.
+- [x] Tabelas criadas na produção Hetzner através de workflow n8n dedicado.
+- [x] Estrutura validada por leitura.
+- [x] Workflow inicial de confirmação/verificação criado e mantido inativo.
+- [x] Decisões de multi-tenant, PostgreSQL na Hetzner e Work Item Engine documentadas no Notion.
 
-O ícone/logo atual da Sofia permanece como referência oficial e não será substituído nesta fase. Qualquer proposta futura deve demonstrar ligação visual e estratégica com o universo LABORYA, preservar reconhecimento, funcionar em aplicações reais e ser avaliada por critérios de posicionamento, diferenciação, memorabilidade, escalabilidade e coerência com o site público.
+## Pendente, sem execução ainda
 
+- [ ] Fechar o mapa único de evolução.
+- [ ] Definir o primeiro teste controlado de marcação.
+- [ ] Corrigir o gate de idempotência antes de repetir ações externas.
+- [ ] Definir consulta por `tenant_id` + `idempotency_key`.
+- [ ] Desviar Work Item `verified` com `google_event_id` para resposta existente.
+- [ ] Permitir criação no Calendar apenas para Work Item novo ou incompleto.
+- [ ] Testar primeira execução e repetição do mesmo pedido.
+- [ ] Confirmar que a repetição não cria segundo evento.
+- [ ] Documentar o gate no mapa único e no changelog.
+- [ ] Versionar o workflow e o contrato na branch de segurança.
+- [ ] Testar uma marcação real futura.
+- [ ] Confirmar evento no Calendar.
+- [ ] Confirmar Work Item e eventos append-only.
+- [ ] Testar falha de verificação.
+- [ ] Testar retry sem duplicação.
+- [ ] Testar isolamento entre dois tenants.
+- [ ] Integrar o padrão no Kernel somente após aprovação dos testes.
 
-- [ ] Verificar se o conector Dropbox está disponível nesta sessão.
-- [ ] Localizar a pasta ou área Marketing no Dropbox.
-- [ ] Rever logos, paleta, fontes, guidelines e exemplos de comunicação.
-- [ ] Abrir e analisar visualmente o site público https://www.uselaborya.com/.
-- [ ] Comparar o sistema de marca encontrado com o site Sofia atual.
-- [ ] Documentar divergências de cores, tipografia, logo, tom e componentes.
-- [ ] Propor sistema de marca alinhado para a Sofia sem substituir o logo atual.
-- [ ] Se solicitado, criar uma alternativa profissional usando o ícone atual como referência, não como substituição automática.
-- [ ] Apresentar comparação e recomendação antes de implementar alterações.
-- [ ] Guardar checkpoint de segurança antes da revisão visual.
-- [ ] Implementar revisão LABORYA em alteração isolada.
-- [ ] Verificar desktop e mobile.
-- [ ] Guardar novo checkpoint apenas após validação.
+## Bloqueado até aprovação
 
-## Futura página comercial Sofia para negócios
+- [ ] Ativar workflow de produção de forma permanente.
+- [ ] Migrar para Supabase.
+- [ ] Criar staging ou nova infraestrutura.
+- [ ] Criar novos serviços.
+- [ ] Adicionar novos módulos antes de validar marcação.
 
-## Execução aprovada
+## Documentação obrigatória
 
-A página comercial será criada como rota separada, sem substituir a página oficial “Sofia — Evolução Incremental”. Toda alteração será validada nas duas rotas e guardada num checkpoint reversível.
-
-
-- [ ] Definir ICP inicial entre negócios locais de serviços.
-- [ ] Estruturar narrativa comercial separada da página técnica oficial.
-- [ ] Definir casos de uso concretos sem inventar resultados ou testemunhos.
-- [ ] Criar CTA de piloto e formulário de qualificação.
-- [ ] Definir prova operacional, segurança e supervisão humana.
-- [ ] Preservar a página atual como referência oficial da equipa.
-- [ ] Criar wireframe e rota `/sofia-para-negocios`.
-- [ ] Implementar hero comercial e proposta de valor.
-- [ ] Adicionar casos de uso SMB e demonstração operacional.
-- [ ] Adicionar secção de confiança, piloto e CTA de qualificação.
-- [ ] Validar rota técnica e rota comercial em desktop e mobile.
-- [ ] Guardar checkpoint da nova versão.
-
-## Upgrade Sofia — duas etapas
-
-- [ ] Documentar no Notion em LABORYA · Sofia — Changelog de Versões.
-- [ ] Definir baseline e objetivos do upgrade.
-- [ ] Definir arquitetura do fluxo de marcação com confirmação e verificação.
-- [ ] Definir contratos de Work Item, estados, permissões e idempotência.
-- [ ] Definir responsabilidades para execução colaborativa com Claude.
-- [ ] Criar checkpoint WebDev antes das alterações.
-- [ ] Criar branch Git de segurança para o upgrade.
-- [ ] Confirmar critérios de aceitação e plano de rollback.
-- [ ] Adicionar requisito multi-tenant/SaaS ao changelog.
-- [ ] Tornar `tenant_id` obrigatório no Work Item e nas tools do piloto.
-- [ ] Definir isolamento de memória, credenciais, canais, políticas, logs e retries.
-- [ ] Separar tenant, unidade, conta de canal, utilizador final e instância da Sofia.
-- [ ] Adicionar testes de não-vazamento entre tenants aos critérios de aceitação.
-- [ ] Confirmar branch `feature/sofia-upgrade-core` como base de trabalho.
-- [ ] Localizar no n8n o workflow operacional de marcação.
-- [ ] Mapear pontos de confirmação, criação de evento e resposta final.
-- [ ] Preparar módulo de verificação sem alterar produção.
-- [ ] Documentar no Notion cada alteração do fluxo.
-- [ ] Registar decisão Fase 1: Work Item Engine no Postgres existente.
-- [ ] Criar `sofia.work_items` e `sofia.work_item_events` sob controlo exclusivo do Kernel.
-- [ ] Garantir deduplicação atómica e decisão única do Kernel.
-- [ ] Definir critérios para reavaliar serviço separado na Fase 2.
-- [ ] Gerar SQL idempotente para `sofia.work_items` e `sofia.work_item_events`.
-- [ ] Incluir constraints multi-tenant, índices, deduplicação e trigger de `updated_at`.
-- [ ] Criar workflow inicial n8n para criação/confirmacao/verificação de marcação.
-- [ ] Manter workflow inativo até validação.
-- [ ] Versionar SQL e export do workflow na branch de segurança.
-- [ ] Atualizar Notion com o modelo relacional detalhado.
-- [ ] Validar os três artefactos e os critérios de rollback.
-- [ ] Atualizar o changelog com o commit `dee72b6` e o workflow `gVIIbD26KiscNVx3`.
-- [ ] Documentar nós, contratos, estados, checks e ponto de integração.
-- [ ] Relacionar o primeiro módulo com isolamento multi-tenant.
-- [ ] Validar a entrada atualizada no Notion.
-
-## GitHub
-
-- [ ] Criar repositório privado `Tarsnp/sofia-evolucao-site`.
-- [ ] Adicionar o remoto GitHub sem remover o remoto WebDev.
-- [ ] Enviar o branch `main` e confirmar o commit publicado.
-- [ ] Verificar URL, visibilidade e estado limpo do repositório.
+- [ ] Criar mapa único no Notion.
+- [ ] Registar estado atual, etapas, ações, responsável e critério de avanço.
+- [ ] Referenciar cada commit, workflow e decisão no mesmo documento.
+- [ ] Definir uma única próxima ação por fase.
