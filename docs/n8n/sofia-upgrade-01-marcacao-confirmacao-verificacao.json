@@ -1,0 +1,470 @@
+{
+  "name": "SOFIA - Upgrade 01 - Marcacao Confirmacao Verificacao",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "tenant_id"
+            },
+            {
+              "name": "business_id"
+            },
+            {
+              "name": "worker_instance_id"
+            },
+            {
+              "name": "correlation_id"
+            },
+            {
+              "name": "idempotency_key"
+            },
+            {
+              "name": "calendario_id"
+            },
+            {
+              "name": "nome_cliente"
+            },
+            {
+              "name": "telefone"
+            },
+            {
+              "name": "servico"
+            },
+            {
+              "name": "data"
+            },
+            {
+              "name": "hora_inicio"
+            },
+            {
+              "name": "duracao_minutos"
+            },
+            {
+              "name": "start_time"
+            },
+            {
+              "name": "end_time"
+            }
+          ]
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000001",
+      "name": "Receber Pedido Marcacao",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const p = $input.first()?.json ?? {};\nconst required = ['tenant_id','business_id','worker_instance_id','correlation_id','idempotency_key','calendario_id','nome_cliente','telefone','servico','data','hora_inicio','duracao_minutos','start_time','end_time'];\nconst missing = required.filter((key) => p[key] === undefined || p[key] === null || String(p[key]).trim() === '');\nif (missing.length) throw new Error('Contexto de marcacao incompleto: ' + missing.join(', '));\nreturn [{ json: { ...p, work_item_type: 'appointment.create_and_verify', work_item_status: 'created', priority: 'normal' } }];"
+      },
+      "id": "7f000001-0000-4000-8000-000000000002",
+      "name": "Validar Contexto Marcacao",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sofia.work_items (tenant_id, business_id, worker_instance_id, type, status, priority, idempotency_key, correlation_id, payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb) ON CONFLICT (tenant_id, idempotency_key) DO UPDATE SET updated_at = now() RETURNING *;",
+        "options": {
+          "queryReplacement": "={{ [$('Validar Contexto Marcacao').item.json.tenant_id, $('Validar Contexto Marcacao').item.json.business_id, $('Validar Contexto Marcacao').item.json.worker_instance_id, $('Validar Contexto Marcacao').item.json.work_item_type, $('Validar Contexto Marcacao').item.json.work_item_status, $('Validar Contexto Marcacao').item.json.priority, $('Validar Contexto Marcacao').item.json.idempotency_key, $('Validar Contexto Marcacao').item.json.correlation_id, JSON.stringify($('Validar Contexto Marcacao').item.json)] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "hNmjxCeGMD0l1GjI",
+          "name": "Postgres - Sofia"
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000003",
+      "name": "Criar ou Recuperar Work Item",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        720,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const p = $('Validar Contexto Marcacao').item.json;\nconst w = $input.first().json;\nreturn [{ json: { ...p, work_item_id: w.work_item_id, work_item_status: w.status } }];"
+      },
+      "id": "7f000001-0000-4000-8000-000000000004",
+      "name": "Preparar Operacao Agenda",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "fheW4YJTDJVyWXVC"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "value": {
+            "operacao": "criar_evento",
+            "calendario_id": "={{ $('Preparar Operacao Agenda').item.json.calendario_id }}",
+            "nome_cliente": "={{ $('Preparar Operacao Agenda').item.json.nome_cliente }}",
+            "telefone": "={{ $('Preparar Operacao Agenda').item.json.telefone }}",
+            "servico": "={{ $('Preparar Operacao Agenda').item.json.servico }}",
+            "data": "={{ $('Preparar Operacao Agenda').item.json.data }}",
+            "hora_inicio": "={{ $('Preparar Operacao Agenda').item.json.hora_inicio }}",
+            "duracao_minutos": "={{ $('Preparar Operacao Agenda').item.json.duracao_minutos }}"
+          }
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000005",
+      "name": "Criar Marcacao Calendar",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1200,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const p = $('Preparar Operacao Agenda').item.json;\nconst r = $input.first().json;\nif (r.status !== 'ok' || !r.google_event_id) throw new Error('Criacao da marcacao nao confirmada pelo Tool Agenda');\nreturn [{ json: { tenant_id: p.tenant_id, business_id: p.business_id, worker_instance_id: p.worker_instance_id, correlation_id: p.correlation_id, calendar_id: p.calendario_id, google_event_id: r.google_event_id, customer_id: p.telefone, start_time: p.start_time, end_time: p.end_time, work_item_id: p.work_item_id, appointment_result: r } }];"
+      },
+      "id": "7f000001-0000-4000-8000-000000000006",
+      "name": "Preparar Verificacao Marcacao",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "once",
+        "options": {
+          "waitForSubWorkflow": true
+        },
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gVIIbD26KiscNVx3"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "value": {
+            "tenant_id": "={{ $('Preparar Verificacao Marcacao').item.json.tenant_id }}",
+            "calendar_id": "={{ $('Preparar Verificacao Marcacao').item.json.calendar_id }}",
+            "google_event_id": "={{ $('Preparar Verificacao Marcacao').item.json.google_event_id }}",
+            "start_time": "={{ $('Preparar Verificacao Marcacao').item.json.start_time }}",
+            "end_time": "={{ $('Preparar Verificacao Marcacao').item.json.end_time }}"
+          }
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000007",
+      "name": "Verificar Marcacao Calendar",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1680,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.verification_status }}",
+              "operation": "equals",
+              "value2": "verified"
+            }
+          ]
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000008",
+      "name": "Marcacao Verificada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE sofia.work_items SET status = 'verified', result = $1::jsonb, completed_at = now() WHERE work_item_id = $2 AND tenant_id = $3 RETURNING *;",
+        "options": {
+          "queryReplacement": "={{ [JSON.stringify($json), $('Preparar Verificacao Marcacao').item.json.work_item_id, $('Preparar Verificacao Marcacao').item.json.tenant_id] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "hNmjxCeGMD0l1GjI",
+          "name": "Postgres - Sofia"
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000009",
+      "name": "Persistir Work Item Verificado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2160,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE sofia.work_items SET status = 'failed', error = $1::jsonb WHERE work_item_id = $2 AND tenant_id = $3 RETURNING *;",
+        "options": {
+          "queryReplacement": "={{ [JSON.stringify($json), $('Preparar Verificacao Marcacao').item.json.work_item_id, $('Preparar Verificacao Marcacao').item.json.tenant_id] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "hNmjxCeGMD0l1GjI",
+          "name": "Postgres - Sofia"
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000010",
+      "name": "Persistir Work Item Falhado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2160,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sofia.work_item_events (work_item_id, tenant_id, event_type, from_status, to_status, actor, correlation_id, idempotency_key, payload) VALUES ($1,$2,'work_item.created',NULL,'created','sofia_kernel',$3,$4,$5::jsonb) ON CONFLICT (tenant_id, work_item_id, event_type, idempotency_key) DO NOTHING RETURNING *;",
+        "options": {
+          "queryReplacement": "={{ [$json.work_item_id, $('Validar Contexto Marcacao').item.json.tenant_id, $('Validar Contexto Marcacao').item.json.correlation_id, $('Validar Contexto Marcacao').item.json.idempotency_key + ':created', JSON.stringify($json)] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "hNmjxCeGMD0l1GjI",
+          "name": "Postgres - Sofia"
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000011",
+      "name": "Registar Evento Work Item Criado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        960,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sofia.work_item_events (work_item_id, tenant_id, event_type, from_status, to_status, actor, correlation_id, idempotency_key, payload) VALUES ($1,$2,'work_item.verified','verifying','verified','sofia_kernel',$3,$4,$5::jsonb) ON CONFLICT (tenant_id, work_item_id, event_type, idempotency_key) DO NOTHING RETURNING *;",
+        "options": {
+          "queryReplacement": "={{ [$json.work_item_id, $('Preparar Verificacao Marcacao').item.json.tenant_id, $('Preparar Verificacao Marcacao').item.json.correlation_id, $('Preparar Verificacao Marcacao').item.json.work_item_id + ':verified', JSON.stringify($json)] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "hNmjxCeGMD0l1GjI",
+          "name": "Postgres - Sofia"
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000012",
+      "name": "Registar Evento Work Item Verificado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2400,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sofia.work_item_events (work_item_id, tenant_id, event_type, from_status, to_status, actor, correlation_id, idempotency_key, payload) VALUES ($1,$2,'work_item.failed','verifying','failed','sofia_kernel',$3,$4,$5::jsonb) ON CONFLICT (tenant_id, work_item_id, event_type, idempotency_key) DO NOTHING RETURNING *;",
+        "options": {
+          "queryReplacement": "={{ [$json.work_item_id, $('Preparar Verificacao Marcacao').item.json.tenant_id, $('Preparar Verificacao Marcacao').item.json.correlation_id, $('Preparar Verificacao Marcacao').item.json.work_item_id + ':failed', JSON.stringify($json)] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "hNmjxCeGMD0l1GjI",
+          "name": "Postgres - Sofia"
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000013",
+      "name": "Registar Evento Work Item Falhado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2400,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Receber Pedido Marcacao": {
+      "main": [
+        [
+          {
+            "node": "Validar Contexto Marcacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar Contexto Marcacao": {
+      "main": [
+        [
+          {
+            "node": "Criar ou Recuperar Work Item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar ou Recuperar Work Item": {
+      "main": [
+        [
+          {
+            "node": "Registar Evento Work Item Criado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Operacao Agenda": {
+      "main": [
+        [
+          {
+            "node": "Criar Marcacao Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Marcacao Calendar": {
+      "main": [
+        [
+          {
+            "node": "Preparar Verificacao Marcacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Verificacao Marcacao": {
+      "main": [
+        [
+          {
+            "node": "Verificar Marcacao Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar Marcacao Calendar": {
+      "main": [
+        [
+          {
+            "node": "Marcacao Verificada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcacao Verificada?": {
+      "main": [
+        [
+          {
+            "node": "Persistir Work Item Verificado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Persistir Work Item Falhado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registar Evento Work Item Criado": {
+      "main": [
+        [
+          {
+            "node": "Preparar Operacao Agenda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persistir Work Item Verificado": {
+      "main": [
+        [
+          {
+            "node": "Registar Evento Work Item Verificado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persistir Work Item Falhado": {
+      "main": [
+        [
+          {
+            "node": "Registar Evento Work Item Falhado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveExecutionProgress": true
+  },
+  "staticData": null
+}

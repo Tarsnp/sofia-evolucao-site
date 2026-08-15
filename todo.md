@@ -64,6 +64,21 @@ A página comercial será criada como rota separada, sem substituir a página of
 - [ ] Mapear pontos de confirmação, criação de evento e resposta final.
 - [ ] Preparar módulo de verificação sem alterar produção.
 - [ ] Documentar no Notion cada alteração do fluxo.
+- [ ] Registar decisão Fase 1: Work Item Engine no Postgres existente.
+- [ ] Criar `sofia.work_items` e `sofia.work_item_events` sob controlo exclusivo do Kernel.
+- [ ] Garantir deduplicação atómica e decisão única do Kernel.
+- [ ] Definir critérios para reavaliar serviço separado na Fase 2.
+- [ ] Gerar SQL idempotente para `sofia.work_items` e `sofia.work_item_events`.
+- [ ] Incluir constraints multi-tenant, índices, deduplicação e trigger de `updated_at`.
+- [ ] Criar workflow inicial n8n para criação/confirmacao/verificação de marcação.
+- [ ] Manter workflow inativo até validação.
+- [ ] Versionar SQL e export do workflow na branch de segurança.
+- [ ] Atualizar Notion com o modelo relacional detalhado.
+- [ ] Validar os três artefactos e os critérios de rollback.
+- [ ] Atualizar o changelog com o commit `dee72b6` e o workflow `gVIIbD26KiscNVx3`.
+- [ ] Documentar nós, contratos, estados, checks e ponto de integração.
+- [ ] Relacionar o primeiro módulo com isolamento multi-tenant.
+- [ ] Validar a entrada atualizada no Notion.
 
 ## GitHub
 
