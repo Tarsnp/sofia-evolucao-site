@@ -4,7 +4,8 @@ import { ArrowDown, ArrowUpRight, Check, ChevronRight, CircleDot, Menu, X, Zap }
 const heroImage = "/manus-storage/sofia-hero_cb2fd749.jpg";
 const architectureImage = "/manus-storage/sofia-architecture_a9f5d9c2.jpg";
 const roadmapImage = "/manus-storage/sofia-roadmap_43d7f4e2.jpg";
-const symbol = "/manus-storage/sofia-symbol_d191bcac.png";
+const brandLockup = "/manus-storage/laborya-lockup-dark_632ac8e0.svg";
+const brandMark = "/manus-storage/laborya-mark_4f93bd3f.svg";
 
 const workLoop = [
   ["01", "Compreender", "Interpretar mensagem, evento, cliente e contexto."],
@@ -56,9 +57,9 @@ export default function Home() {
   return (
     <main className="site-shell">
       <header className="site-header">
-        <a className="brand" href="#visao" onClick={closeMenu} aria-label="Sofia, início">
-          <img src={symbol} alt="" className="brand-mark" />
-          <span>SOFIA<span className="brand-dot">.</span></span>
+        <a className="brand" href="#visao" onClick={closeMenu} aria-label="LABORYA — Sofia, início">
+          <img src={brandLockup} alt="LABORYA" className="brand-lockup" />
+          <span className="brand-product">SOFIA / DIGITAL WORKER</span>
         </a>
         <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Abrir menu">
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -77,7 +78,7 @@ export default function Home() {
         <div className="hero-image" style={{ backgroundImage: `url(${heroImage})` }} />
         <div className="hero-grid" />
         <div className="hero-content reveal">
-          <p className="eyebrow"><span className="pulse" /> LABORYA · EVOLUÇÃO INCREMENTAL</p>
+          <p className="eyebrow"><span className="pulse" /> SOFIA · DIGITAL WORKER DA LABORYA</p>
           <h1>Não recomeçamos.<br /><em>Adicionamos controlo.</em></h1>
           <p className="hero-lede">A Sofia já é o motor. Agora vamos torná-la uma Digital Worker capaz de transformar pedidos em trabalho executado, verificado e supervisionado.</p>
           <div className="hero-actions">
@@ -127,7 +128,7 @@ export default function Home() {
 
       <section className="roadmap-section reveal"><div className="roadmap-bg" style={{ backgroundImage: `url(${roadmapImage})` }} /><div className="roadmap-inner"><div className="section-marker">/ 07 — HORIZONTE</div><h2>A visão de longo prazo<br /><span>continua intacta.</span></h2><p>Da Sofia Controlada à Equipa Digital: cada fase acrescenta autonomia sobre uma fundação comprovada.</p><div className="roadmap-steps">{[["01", "Sofia Controlada"], ["02", "Sofia Proativa"], ["03", "Digital Twin"], ["04", "Equipa Digital"]].map(([n, t]) => <div key={n}><span>{n}</span><strong>{t}</strong></div>)}</div></div></section>
 
-      <section className="closing-section"><div className="closing-inner"><img src={symbol} alt="" /><div className="section-marker">LABORYA · AUTONOMOUS DIGITAL WORKERS FOR SMBs</div><h2>A Sofia já é o motor.<br /><span>Agora damos-lhe controlo.</span></h2><a className="button button-primary" href="#visao">Voltar ao início <ArrowUpRight size={17} /></a></div></section>
+      <section className="closing-section"><div className="closing-inner"><img src={brandMark} alt="" /><div className="section-marker">LABORYA · AUTONOMOUS DIGITAL WORKERS FOR SMBs</div><h2>A Sofia já é o motor.<br /><span>Agora damos-lhe controlo.</span></h2><a className="button button-primary" href="#visao">Voltar ao início <ArrowUpRight size={17} /></a></div></section>
 
       <footer className="site-footer"><span>© 2026 LABORYA</span><span>SOFIA / EVOLUÇÃO INCREMENTAL</span><a href="https://www.uselaborya.com/" target="_blank" rel="noreferrer">uselaborya.com <ArrowUpRight size={13} /></a></footer>
     </main>
