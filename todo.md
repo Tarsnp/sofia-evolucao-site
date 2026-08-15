@@ -19,11 +19,7 @@ Não executar novos comandos, migrations, ativações n8n, alterações de produ
 ## Pendente, sem execução ainda
 
 - [ ] Fechar o mapa único de evolução.
-- [ ] Definir o primeiro teste controlado de marcação.
 - [ ] Corrigir o gate de idempotência antes de repetir ações externas.
-- [ ] Definir consulta por `tenant_id` + `idempotency_key`.
-- [ ] Desviar Work Item `verified` com `google_event_id` para resposta existente.
-- [ ] Permitir criação no Calendar apenas para Work Item novo ou incompleto.
 - [ ] Testar primeira execução e repetição do mesmo pedido.
 - [ ] Confirmar que a repetição não cria segundo evento.
 - [ ] Documentar o gate no mapa único e no changelog.
@@ -50,3 +46,7 @@ Não executar novos comandos, migrations, ativações n8n, alterações de produ
 - [ ] Registar estado atual, etapas, ações, responsável e critério de avanço.
 - [ ] Referenciar cada commit, workflow e decisão no mesmo documento.
 - [ ] Definir uma única próxima ação por fase.
+
+## Histórico
+
+A página comercial, o upgrade inicial, a arquitetura multi-tenant, os workflows n8n e os commits anteriores estão documentados no changelog oficial e no mapa único de evolução. Este checklist não duplica essas listas; acompanha apenas o estado consolidado atual.
