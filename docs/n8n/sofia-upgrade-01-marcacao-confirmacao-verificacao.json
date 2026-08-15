@@ -328,6 +328,100 @@
         2400,
         400
       ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT work_item_id, tenant_id, status, result FROM sofia.work_items WHERE tenant_id = $1 AND idempotency_key = $2 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$('Validar Contexto Marcacao').item.json.tenant_id, $('Validar Contexto Marcacao').item.json.idempotency_key] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "hNmjxCeGMD0l1GjI",
+          "name": "Postgres - Sofia"
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000014",
+      "name": "Consultar Work Item Idempotencia",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1200,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const row = $input.first()?.json ?? {};\nconst result = row.result ?? {};\nconst eventId = result.google_event_id ?? result.appointment_result?.google_event_id ?? null;\nconst original = $('Validar Contexto Marcacao').item.json;\nconst reuse = row.status === 'verified' && Boolean(eventId);\nreturn [{ json: { ...original, work_item_id: row.work_item_id, work_item_status: row.status, existing_result: result, existing_google_event_id: eventId, idempotency_reuse: reuse } }];"
+      },
+      "id": "7f000001-0000-4000-8000-000000000015",
+      "name": "Classificar Idempotencia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.idempotency_reuse }}",
+              "operation": "true"
+            }
+          ]
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000016",
+      "name": "Reutilizar Resultado Verificado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const p = $input.first().json;\nreturn [{ json: { ...p, reused: true, status: 'verified', verification_status: 'verified', google_event_id: p.existing_google_event_id, result: p.existing_result, message: 'Pedido idempotente: resultado verificado reutilizado; nenhum novo evento foi criado.' } }];"
+      },
+      "id": "7f000001-0000-4000-8000-000000000017",
+      "name": "Preparar Resultado Reutilizado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sofia.work_item_events (work_item_id, tenant_id, event_type, from_status, to_status, actor, correlation_id, idempotency_key, payload) VALUES ($1,$2,'work_item.idempotency_reused','verified','verified','sofia_kernel',$3,$4,$5::jsonb) ON CONFLICT (tenant_id, work_item_id, event_type, idempotency_key) DO NOTHING RETURNING *;",
+        "options": {
+          "queryReplacement": "={{ [$json.work_item_id, $json.tenant_id, $json.correlation_id, $json.idempotency_key + ':reused', JSON.stringify({ google_event_id: $json.existing_google_event_id, reason: 'verified_result_reused' })] }}"
+        }
+      },
+      "credentials": {
+        "postgres": {
+          "id": "hNmjxCeGMD0l1GjI",
+          "name": "Postgres - Sofia"
+        }
+      },
+      "id": "7f000001-0000-4000-8000-000000000018",
+      "name": "Registar Reutilizacao Idempotente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2160,
+        440
+      ]
     }
   ],
   "connections": {
@@ -430,7 +524,7 @@
       "main": [
         [
           {
-            "node": "Preparar Operacao Agenda",
+            "node": "Consultar Work Item Idempotencia",
             "type": "main",
             "index": 0
           }
@@ -453,6 +547,57 @@
         [
           {
             "node": "Registar Evento Work Item Falhado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Work Item Idempotencia": {
+      "main": [
+        [
+          {
+            "node": "Classificar Idempotencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classificar Idempotencia": {
+      "main": [
+        [
+          {
+            "node": "Reutilizar Resultado Verificado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reutilizar Resultado Verificado?": {
+      "main": [
+        [
+          {
+            "node": "Preparar Resultado Reutilizado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar Operacao Agenda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Resultado Reutilizado": {
+      "main": [
+        [
+          {
+            "node": "Registar Reutilizacao Idempotente",
             "type": "main",
             "index": 0
           }
