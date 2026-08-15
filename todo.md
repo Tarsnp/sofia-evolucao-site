@@ -43,3 +43,21 @@ A página comercial será criada como rota separada, sem substituir a página of
 - [ ] Adicionar secção de confiança, piloto e CTA de qualificação.
 - [ ] Validar rota técnica e rota comercial em desktop e mobile.
 - [ ] Guardar checkpoint da nova versão.
+
+## Upgrade Sofia — duas etapas
+
+- [ ] Documentar no Notion em LABORYA · Sofia — Changelog de Versões.
+- [ ] Definir baseline e objetivos do upgrade.
+- [ ] Definir arquitetura do fluxo de marcação com confirmação e verificação.
+- [ ] Definir contratos de Work Item, estados, permissões e idempotência.
+- [ ] Definir responsabilidades para execução colaborativa com Claude.
+- [ ] Criar checkpoint WebDev antes das alterações.
+- [ ] Criar branch Git de segurança para o upgrade.
+- [ ] Confirmar critérios de aceitação e plano de rollback.
+
+## GitHub
+
+- [ ] Criar repositório privado `Tarsnp/sofia-evolucao-site`.
+- [ ] Adicionar o remoto GitHub sem remover o remoto WebDev.
+- [ ] Enviar o branch `main` e confirmar o commit publicado.
+- [ ] Verificar URL, visibilidade e estado limpo do repositório.
